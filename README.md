@@ -1,2 +1,2 @@
 # dbt-examples
-dbt examples
+

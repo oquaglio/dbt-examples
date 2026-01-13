@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: customers
+    description: Customer dimension with PII
+    config:
+      tags: [pii, finance]
+
+    columns:
+      - name: email
+        description: Customer email - PII
+        tags: [pii, sensitive]
+        meta:
+          trino_properties:
+            classification: "pii"
+            sensitivity: "high"
+
+      - name: ssn
+        description: Social Security Number - highly sensitive
+        tags: [pii, critical]
+        meta:
+          trino_properties:
+            classification: "critical_pii"
+
+      - name: phone
+        tags: [pii]

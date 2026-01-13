@@ -1,1 +1,2 @@
-**/.log  # Recursive log files
+# Logs - recursive (ignore all .log files anywhere in the project)
+**/*.log
