@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Staged orders with amount converted from cents to dollars. Materialized as ephemeral (compiled to CTE)."
+    columns:
+      - name: order_id
+        description: "Unique order identifier"
+        tests:
+          - unique
+          - not_null
+      - name: status
+        description: '{{ doc("order_status") }}'
+      - name: amount_dollars
+        description: '{{ doc("amount_dollars") }}'
