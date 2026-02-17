@@ -34,5 +34,5 @@ clean-targets: # directories to be removed by `dbt clean`
 models:
   mysql_example:
     # Config indicated by + and applies to all files under models/example/
-    example:
+    example: # This is the name of the subdirectory under models/ where these configs will apply
       +materialized: view

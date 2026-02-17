@@ -1,6 +1,7 @@
 mysql_example:
-  outputs:
-    dev:
+  target: dev # default target to use for dbt commands; can be overridden with --target flag
+  outputs: # You can specify multiple outputs for different environments (e.g. dev, prod)
+    dev: # This is the name of the target; it can be anything you like
       type: mysql # Use 'mysql' for MySQL 8.x (your container version); use 'mysql5' for 5.x or 'mariadb' for MariaDB
       server: localhost
       port: 3306
@@ -8,4 +9,4 @@ mysql_example:
       username: root
       password: mysecretpassword
       ssl_disabled: True # Optional but recommended to disable TLS if not configured
-  target: dev
+
