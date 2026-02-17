@@ -36,7 +36,7 @@ dbt --version
 
 Create dbt project:
 ```sh
-dbt init
+dbt init --profiles-dir .
 ```
 Enter:
 - dbt project: trino_tagging_demo
@@ -62,7 +62,7 @@ trino_tagging_demo/
     └── iceberg.properties
 ```
 
- ~/.dbt/profiles.yml:
+ ~/.dbt/profiles.yml or wherever (e.g. dbt project dir)
 
 ```yaml
 trino_tagging_demo:

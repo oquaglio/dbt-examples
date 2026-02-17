@@ -1,0 +1,14 @@
+trino_tagging_demo:
+  target: dev
+  outputs:
+    dev:
+      type: trino
+      user: myminioadmin
+      password: SuperSecureMinioPass2025!
+      catalog: iceberg
+      schema: demo
+      host: localhost
+      port: 8080
+      method: none
+      session_properties:
+        query_max_run_time: 100m

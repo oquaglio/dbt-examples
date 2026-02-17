@@ -1,2 +1,3 @@
 # Logs - recursive (ignore all .log files anywhere in the project)
 **/*.log
+.user.yml

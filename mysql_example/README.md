@@ -1,5 +1,22 @@
 #
 
+Welcome to your new dbt project!
+
+### Using the starter project
+
+Try running the following commands:
+- dbt run
+- dbt test
+
+
+### Resources:
+- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
+- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
+- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
+- Find [dbt events](https://events.getdbt.com) near you
+- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+
+
 ## Setup
 
 ### Set up Python
@@ -30,6 +47,7 @@ dbt --version
 Create dbt project:
 ```sh
 dbt init
+dbt init --profiles-dir .
 ```
 Select:
 - dbt project: mysql_example
@@ -39,33 +57,25 @@ This will:
 - create mysql_example project
 - create ~/.dbt/profiles.yml
 
-Set the following in the profiles.yml:
-```sql
-mysql_example:
-  outputs:
-    dev:
-      type: mysql  # Use 'mysql' for MySQL 8.x (your container version); use 'mysql5' for 5.x or 'mariadb' for MariaDB
-      server: localhost
-      port: 3306
-      schema: dbt_example  # This should be the name of the database you created in MySQL
-      username: root
-      password: mysecretpassword
-      ssl_disabled: True  # Optional but recommended to disable TLS if not configured
-  target: dev
-```
-
 ### Set up MySQL
 
+Start MySQL and phpMyAdmin using Docker Compose:
 ```sh
-docker pull mysql:8.0
+docker compose up -d
 ```
 
+This starts:
+- **MySQL 8.0** on `localhost:3306`
+- **phpMyAdmin** on [http://localhost:8080](http://localhost:8080) (login with `root` / `mysecretpassword`)
+
+Stop the services:
 ```sh
-docker run --name dbt-mysql \
-  -e MYSQL_ROOT_PASSWORD=mysecretpassword \
-  -e MYSQL_DATABASE=dbt_example \
-  -p 3306:3306 \
-  -d mysql:8.0
+docker compose down
+```
+
+To also remove the persisted data volume:
+```sh
+docker compose down -v --remove-orphans
 ```
 
 ## Run the dbt models
@@ -87,7 +97,7 @@ dbt run
 
 Update the seed:
 ```sh
-dbt seed --full-refresh
+dbt seed --full-refresh --target dev
 ```
 
 Recreate the model based on the seed:
