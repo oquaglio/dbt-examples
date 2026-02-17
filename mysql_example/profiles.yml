@@ -5,7 +5,7 @@ mysql_example:
       type: mysql # Use 'mysql' for MySQL 8.x (your container version); use 'mysql5' for 5.x or 'mariadb' for MariaDB
       server: localhost
       port: 3306
-      schema: dbt_example # This should be the name of the database you created in MySQL
+      schema: mysql_example # This should be the name of the database you created in MySQL
       username: root
       password: mysecretpassword
       ssl_disabled: True # Optional but recommended to disable TLS if not configured

@@ -1,6 +1,28 @@
 version: 2
 
 models:
+  - name: customer_orders
+    description: "Aggregated order metrics per customer (table materialization)"
+    columns:
+      - name: customer_name
+        description: "Customer name"
+        tests:
+          - unique
+          - not_null
+      - name: total_orders
+        description: "Number of orders placed"
+      - name: total_spent
+        description: '{{ doc("amount_dollars") }}'
+
+  - name: completed_orders
+    description: "Only completed orders (view materialization, inherited from directory config)"
+    columns:
+      - name: order_id
+        description: "Unique order identifier"
+        tests:
+          - unique
+          - not_null
+
   - name: orders_incremental
     description: "Incrementally loaded orders. Only new/updated rows are processed on subsequent runs. Uses dbt_utils.generate_surrogate_key for a hashed order key."
     columns:

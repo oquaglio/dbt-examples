@@ -192,3 +192,10 @@ Check docker logs:
 ```sh
 docker logs dbt-mysql
 ```
+
+
+## Nuke
+
+```sh
+docker compose down -v && docker compose up -d && sleep 5 && dbt seed && dbt run
+```
