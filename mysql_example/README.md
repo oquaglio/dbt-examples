@@ -21,10 +21,12 @@ Try running the following commands:
 
 ### Set up Python
 
-Set Python ver and create venv:
+Set Python ver (once off):
 ```sh
 uv python pin 3.13.5
 ```
+
+### Set up Venv
 
 Create and activate venv:
 ```sh
@@ -32,17 +34,25 @@ uv venv
 source .venv/bin/activate
 ```
 
-### Set up dbt project
-
-Install dbt in venv:
+Install dbt in venv (DON'T DO THIS, see below):
 ```sh
 uv pip install dbt-mysql
 ```
+UPDATE: better to use:
+```sh
+uv init --bare                      # creates pyproject.toml only
+uv add "dbt-core~=1.7.0" "dbt-mysql==1.7.0"
+```
+Then use uv run dbt <cmd>, or activate the environment with source .venv/bin/activate.
+
+Then use uv run dbt <cmd>, or activate the environment with source .venv/bin/activate. This beats uv pip install because the versions are recorded in pyproject.toml and uv.lock, so the setup can be reproduced.
 
 Verify dbt:
 ```sh
 dbt --version
  ```
+
+### Set up the dbt Project (Once off)
 
 Create dbt project:
 ```sh
