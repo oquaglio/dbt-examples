@@ -43,8 +43,6 @@ UPDATE: better to use:
 uv init --bare                      # creates pyproject.toml only
 uv add "dbt-core~=1.7.0" "dbt-mysql==1.7.0"
 ```
-Then use uv run dbt <cmd>, or activate the environment with source .venv/bin/activate.
-
 Then use uv run dbt <cmd>, or activate the environment with source .venv/bin/activate. This beats uv pip install because the versions are recorded in pyproject.toml and uv.lock, so the setup can be reproduced.
 
 Verify dbt:
