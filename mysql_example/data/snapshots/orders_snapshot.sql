@@ -7,7 +7,7 @@
 
 {{
     config(
-        target_schema='dbt_example',
+        target_schema=target.schema,
         unique_key='order_id',
         strategy='timestamp',
         updated_at='updated_at'

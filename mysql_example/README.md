@@ -121,7 +121,7 @@ dbt test
 Generate and serve docs:
 ```sh
 dbt docs generate
-dbt docs serve
+dbt docs serve --port 8081  # 8080 is taken by phpMyAdmin
 ```
 
 Re-seed after CSV changes:
@@ -151,19 +151,21 @@ Declares raw tables as sources with `{{ source('raw', 'raw_orders') }}`. Include
 `materialized='incremental'` — only processes new/updated rows on subsequent runs using `{% if is_incremental() %}`.
 
 ### Snapshots (`data/snapshots/orders_snapshot.sql`)
-SCD Type 2 tracking on `raw_orders` using `strategy='timestamp'`. Records historical changes with `dbt_valid_from` / `dbt_valid_to` columns.
+SCD Type 2 tracking on `raw_orders` using `strategy='timestamp'`. Records historical changes with `dbt_valid_from` / `dbt_valid_to` columns. When an order's `updated_at` changes, the old version is closed and a new one is inserted. Current rows have `dbt_valid_to = NULL`. Not run by `dbt run`: use `dbt snapshot` or `dbt build`. Descriptions and tests are in `data/snapshots/schema.yml`.
+
+See [docs/snapshots.md](docs/snapshots.md) for a walkthrough, example queries and gotchas.
 
 ### Custom Macros (`data/macros/cents_to_dollars.sql`)
 Reusable Jinja macro that converts cents to dollars: `{{ cents_to_dollars('amount_cents') }}`.
 
 ### Packages (`packages.yml`)
-Uses `dbt-labs/dbt_utils` for `generate_surrogate_key` in the incremental model. Install with `dbt deps`.
+Installs `dbt-labs/dbt_utils` with `dbt deps`. No model uses it at the moment: `dbt_utils.generate_surrogate_key` generates `cast(... as TEXT)`, which MySQL rejects, so `orders_incremental` builds its `order_key` with plain `md5(cast(order_id as char))` instead.
 
 ### Hooks (`dbt_project.yml`)
-`on-run-start` hook runs `CREATE DATABASE IF NOT EXISTS dbt_example` before models are built.
+`on-run-start` hook runs `CREATE DATABASE IF NOT EXISTS {{ target.schema }}` (`mysql_example_dev` in `profiles.yml`) before models are built.
 
 ### Docs (`data/docs/docs.md`)
-Reusable `{% docs %}` blocks referenced in schema files with `{{ doc("order_status") }}`. View with `dbt docs serve`.
+Reusable `{% docs %}` blocks referenced in schema files with `{{ doc("order_status") }}`. View with `dbt docs serve --port 8081` (the default port, 8080, is taken by phpMyAdmin).
 
 ### Custom Generic Test (`data/macros/test_is_positive.sql`)
 Reusable test macro applied in schema.yml like built-in tests. Validates that column values are > 0. Applied to `total_orders` and `total_spent`.
@@ -189,6 +191,15 @@ Different subdirectories have different default materializations:
 - `staging/` → ephemeral
 - `marts/` → incremental
 
+A `{{ config(materialized=...) }}` in a model overrides the directory default. All three mart models do this, so only `orders_incremental` ends up incremental:
+
+| Model | Materialization | Where it comes from |
+|---|---|---|
+| `stg_orders` | ephemeral | model config (same as the `staging/` default) |
+| `customer_orders` | table | model config, overrides the `marts/` default |
+| `completed_orders` | view | model config, overrides the `marts/` default |
+| `orders_incremental` | incremental | model config (same as the `marts/` default) |
+
 
 ## Check data in MySQL
 
@@ -199,7 +210,7 @@ docker exec -it dbt-mysql mysql -u root -p
 Use password: mysecretpassword
 
 ```sql
-USE dbt_example;
+USE mysql_example_dev;  -- the schema set in profiles.yml
 
 SHOW TABLES;
 
@@ -207,13 +218,13 @@ DESCRIBE example_model;
 
 SHOW FULL TABLES WHERE table_type = 'VIEW';
 
-SELECT * FROM information_schema.tables WHERE table_schema = 'dbt_example';
+SELECT * FROM information_schema.tables WHERE table_schema = 'mysql_example_dev';
 
 -- Check incremental model
 SELECT * FROM orders_incremental;
 
 -- Check snapshot history
-SELECT * FROM orders_snapshot;
+SELECT * FROM orders_snapshot ORDER BY order_id, dbt_valid_from;
 ```
 
 ## Debugging

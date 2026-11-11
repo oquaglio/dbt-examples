@@ -1,5 +1,6 @@
 -- Filters to only completed orders.
--- Demonstrates: view materialization (inherited from dbt_project.yml), ref() chaining.
+-- Demonstrates: view materialization (set in config() below, overriding the marts/
+-- default of incremental from dbt_project.yml), ref() chaining.
 
 {{ config(materialized='view') }}
 
