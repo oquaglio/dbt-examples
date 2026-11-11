@@ -11,8 +11,12 @@ models:
           - not_null
       - name: total_orders
         description: "Number of orders placed"
+        tests:
+          - is_positive
       - name: total_spent
         description: '{{ doc("amount_dollars") }}'
+        tests:
+          - is_positive
 
   - name: completed_orders
     description: "Only completed orders (view materialization, inherited from directory config)"

@@ -126,6 +126,10 @@ Run a specific model:
 dbt run --models seed_model
 ```
 
+Run all:
+```sh
+dbt seed && dbt run && dbt test && dbt compile
+```
 
 ## dbt Features Demonstrated
 
@@ -153,9 +157,27 @@ Uses `dbt-labs/dbt_utils` for `generate_surrogate_key` in the incremental model.
 ### Docs (`data/docs/docs.md`)
 Reusable `{% docs %}` blocks referenced in schema files with `{{ doc("order_status") }}`. View with `dbt docs serve`.
 
+### Custom Generic Test (`data/macros/test_is_positive.sql`)
+Reusable test macro applied in schema.yml like built-in tests. Validates that column values are > 0. Applied to `total_orders` and `total_spent`.
+
+### Singular Test (`data/tests/assert_no_orphan_orders.sql`)
+A standalone SQL query that fails if it returns rows. Checks that every customer in `orders_incremental` has a matching entry in `customer_orders`.
+
+### Exposures (`data/models/marts/exposures.yml`)
+Declares downstream consumers (dashboards, reports). Shows up in the `dbt docs` lineage graph so you can see what depends on your models.
+
+### Tags (`dbt_project.yml`)
+Models are tagged by directory (`staging`, `daily`, `marts`). Run subsets with:
+```sh
+dbt run --select tag:daily
+dbt run --select tag:staging
+```
+
+### Analyses (`data/analyses/order_analysis.sql`)
+SQL that compiles but doesn't create a database object. Run `dbt compile` and check `target/compiled/` for the rendered SQL. Useful for ad-hoc queries.
+
 ### Directory-level Materialization (`dbt_project.yml`)
 Different subdirectories have different default materializations:
-- `example/` → view
 - `staging/` → ephemeral
 - `marts/` → incremental
 

@@ -28,7 +28,7 @@ clean-targets: # directories to be removed by `dbt clean`
 # Hooks: SQL that runs at the start/end of dbt run
 # This ensures the target database exists before any models are built.
 on-run-start:
-  - "CREATE DATABASE IF NOT EXISTS mysql_example"
+  - "CREATE DATABASE IF NOT EXISTS {{ target.schema }}"
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
@@ -40,5 +40,7 @@ models:
   mysql_example:
     staging: # This is the name of the subdirectory under models/ where these configs will apply
       +materialized: ephemeral
+      +tags: ["staging"]
     marts:
       +materialized: incremental
+      +tags: ["daily", "marts"]
