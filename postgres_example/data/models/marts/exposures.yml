@@ -1,0 +1,23 @@
+version: 2
+
+exposures:
+  - name: sales_dashboard
+    description: "Executive sales dashboard showing order metrics per customer"
+    type: dashboard
+    maturity: medium
+    owner:
+      name: "Data Team"
+      email: "data-team@example.com"
+    depends_on:
+      - ref('customer_orders')
+      - ref('completed_orders')
+
+  - name: order_status_report
+    description: "Daily report tracking order status changes"
+    type: analysis
+    maturity: low
+    owner:
+      name: "Data Team"
+      email: "data-team@example.com"
+    depends_on:
+      - ref('orders_incremental')

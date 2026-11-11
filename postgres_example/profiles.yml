@@ -1,0 +1,12 @@
+postgres_example:
+  target: dev # default target to use for dbt commands; can be overridden with --target flag
+  outputs: # You can specify multiple outputs for different environments (e.g. dev, prod)
+    dev: # This is the name of the target; it can be anything you like
+      type: postgres
+      host: localhost
+      port: 5432
+      user: postgres
+      password: mysecretpassword
+      dbname: postgres_example # The database (created by POSTGRES_DB in docker-compose.yml)
+      schema: dev # The schema inside that database where dbt builds everything
+      threads: 1
